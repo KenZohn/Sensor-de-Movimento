@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor de Movimento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Monitor de Movimento</h1>
+  </header>
+  <main>
+    <h1>Dados de Detecção</h1>
+    <div id="dados"></div>
+  </main>
+  <footer>
+    <p>Desenvolvido por Z - Projeto Arduino 🚀</p>
+  </footer>
+  <script>
+    async function carregarDados() {
+      const response = await fetch('http://localhost:3000/api/dados');
+      const dados = await response.json();
+
+      const divDados = document.getElementById('dados');
+      divDados.innerHTML = `<table>
+        <tr>
+          <th>Data</th>
+          <th>Horário</th>
+          <th>Intensidade</th>
+        </tr>
+        ${dados.map(d => `
+          <tr>
+            <td>${d.data}</td>
+            <td>${d.horario}</td>
+            <td>${d.intensidade}</td>
+          </tr>
+        `).join('')}
+      </table>`;
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>
