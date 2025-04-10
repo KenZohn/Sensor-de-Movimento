@@ -1,0 +1,19 @@
+{
+  "name": "ardunode",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "serialport": "^13.0.0",
+    "sqlite3": "^5.1.7",
+    "ws": "^8.18.1"
+  },
+  "description": ""
+}

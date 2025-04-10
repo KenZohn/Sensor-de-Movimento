@@ -78,7 +78,7 @@
   </footer>
   <script>
     async function carregarDados() {
-      const response = await fetch('http://localhost:3000/api/dados');
+      const response = await fetch('http://localhost:3000/dados');
       const dados = await response.json();
 
       const divDados = document.getElementById('dados');
@@ -92,7 +92,7 @@
           <tr>
             <td>${d.data}</td>
             <td>${d.horario}</td>
-            <td>${d.intensidade}</td>
+            <td>${d.estado}</td>
           </tr>
         `).join('')}
       </table>`;
@@ -100,5 +100,52 @@
 
     carregarDados();
   </script>
+  <script>
+    async function carregarDados() {
+        const response = await fetch('http://localhost:3000/dados');
+        const dados = await response.json();
+
+        const divDados = document.getElementById('dados');
+        divDados.innerHTML = `<table>
+            <tr>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Intensidade</th>
+            </tr>
+            ${dados.map(d => `
+                <tr>
+                    <td>${d.data}</td>
+                    <td>${d.horario}</td>
+                    <td>${d.estado}</td>
+                </tr>
+            `).join('')}
+        </table>`;
+    }
+
+    carregarDados();
+
+    // Conecta ao WebSocket
+    const socket = new WebSocket('ws://localhost:8080');
+
+    // Evento de mensagem recebida do WebSocket
+    socket.onmessage = (event) => {
+        const mensagem = JSON.parse(event.data);
+        console.log(mensagem.message); // Exibe a mensagem no console
+
+        // Atualiza a tabela ao receber novos dados
+        carregarDados();
+    };
+
+    // Evento de erro no WebSocket
+    socket.onerror = (error) => {
+        console.error("Erro no WebSocket:", error);
+    };
+
+    // Evento de fechamento do WebSocket
+    socket.onclose = () => {
+        console.log("Conexão com WebSocket fechada");
+    };
+  </script>
+
 </body>
 </html>

@@ -2,25 +2,22 @@ const express = require('express');
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 const bodyParser = require('body-parser');
-const sqlite3 = require("sqlite3");
+const mysql = require('mysql2');
 
 const app = express();
 const port = 3000;
 
-app.use(express.urlencoded({ extended: true }));
+// Configuração do banco de dados
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'seu_usuario',
+  password: 'sua_senha',
+  database: 'nome_do_banco'
+});
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-})
-
-const db = new sqlite3.Database("arduino.db", (err) => {
-  if (err) {
-      console.log("Erro ao conectar no banco de dados Sqlite:",err);
-  }
-  else{
-      console.log("Conectado ao banco Sqlite");
-  }
+db.connect((err) => {
+  if (err) throw err;
+  console.log('Conectado ao banco de dados!');
 });
 
 // Configuração da porta serial
