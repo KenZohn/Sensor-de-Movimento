@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Monitor de Movimento</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Monitor de Movimento</h1>
+  </header>
+  
+  <main>
+    <div class="centered-text">
+        <h1>Cadastro</h1>
+    </div>
+    <form action="/criar" method="POST">
+      <label for="nome">Login:</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="senha" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <hr>
+    <div style="text-align: center;">
+      <a href="/login">Voltar para login</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>Projeto Arduino 🚀</p>
+  </footer>
+</body>
+</html>

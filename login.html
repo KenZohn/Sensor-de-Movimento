@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Monitor de Movimento</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header>
+    <h1>Monitor de Movimento</h1>
+  </header>
+  
+  <main>
+    <div class="centered-text">
+        <h1>Login</h1>
+    </div>
+    <form action="/auth" method="POST">
+      <label for="username">Login:</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Senha:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <hr>
+    <div class="centered-text">
+      <a href="/cadastro">Criar nova conta</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>Projeto Arduino 🚀</p>
+  </footer>
+</body>
+</html>

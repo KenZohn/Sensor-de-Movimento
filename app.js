@@ -4,6 +4,7 @@ const sqlite3 = require("sqlite3");
 const { ReadlineParser } = require('@serialport/parser-readline');
 const path = require("path");
 const WebSocket = require('ws');
+const auth = require('./auth'); 
 
 const app = express();
 const port = 3000;
@@ -12,8 +13,11 @@ const port = 3000;
 const arduinoPort = new SerialPort({ path: '/dev/ttyACM0', baudRate: 9600 });
 const parser = arduinoPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
-// Middleware para JSON
+// Middleware para JSON 
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+app.use(auth); // Usar as rotas de autenticação
 
 const db = new sqlite3.Database("arduino.db", (err) => {
     if (err) {
@@ -70,7 +74,11 @@ parser.on('data', (data) => {
 
 // Rota para enviar a página index.html
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+    } else {
+        res.sendFile(path.join(__dirname, 'login.html'));
+    }
 });
 
 // Rota para realizar o SELECT e retornar os dados
