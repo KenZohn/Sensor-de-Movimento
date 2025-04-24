@@ -9,7 +9,7 @@ const auth = require('./auth');
 const app = express();
 const port = 3000;
 
-// Configurar a porta serial
+// Configuração da porta serial
 const arduinoPort = new SerialPort({ path: '/dev/ttyACM0', baudRate: 9600 });
 const parser = arduinoPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
@@ -27,52 +27,58 @@ const db = new sqlite3.Database("arduino.db", (err) => {
     }
 });
 
-// Configurar WebSocket
+// Configuração do WebSocket
 const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on('connection', (ws) => {
     console.log('Cliente conectado ao WebSocket');
 });
 
-// Registrar os dados enviados pelo Arduino
-parser.on('data', (data) => {
-    console.log(`Dados recebidos do Arduino: ${data}`);
-  
-    const now = new Date();
-    const dataAtual = now.toISOString().split('T')[0];
-    const horarioAtual = now.toTimeString().split(' ')[0];
-
-    db.run(
-        `INSERT INTO movimentos (data, horario, estado) VALUES (?, ?, ?)`,
-        [dataAtual, horarioAtual, data.trim()],
-        (err) => {
-            if (err) {
-                console.error("Erro ao cadastrar:", err.message);
-            } else {
-                console.log("Dados cadastrados com sucesso no banco de dados");
-
-                // Notificar os clientes WebSocket
-                const mensagem = {
-                    message: "Novo dado recebido no banco!",
-                    data: {
-                        dataAtual,
-                        horarioAtual,
-                        estado: data.trim()
-                    }
-                };
-
-                wss.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify(mensagem));
-                    }
-                });
-            }
-        }
-    );
+app.use((req, res, next) => {
+    if (req.session.loggedin) {
+        global.userSession = req.session;
+    }
+    next();
 });
 
+// Registra os dados enviados pelo Arduino
+parser.on('data', (data) => {
+    if (global.userSession && global.userSession.loggedin) {
+        const now = new Date();
+        const dataAtual = now.toISOString().split('T')[0];
+        const horarioAtual = now.toTimeString().split(' ')[0];
+        const userId = require('./auth.js');
 
-// Rota para enviar a página index.html
+        db.run(
+            `INSERT INTO movimentos (data, horario, estado, id_usuario) VALUES (?, ?, ?, ?)`,
+            [dataAtual, horarioAtual, data.trim(), userId],
+            (err) => {
+                if (err) {
+                    console.error("Erro ao cadastrar:", err.message);
+                } else {
+                    console.log("Dados cadastrados com sucesso no banco de dados");
+
+                    const mensagem = {
+                        message: "Novo dado recebido no banco!",
+                        data: {
+                            dataAtual,
+                            horarioAtual,
+                            estado: data.trim()
+                        }
+                    };
+
+                    wss.clients.forEach((client) => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(JSON.stringify(mensagem));
+                        }
+                    });
+                }
+            }
+        );
+    }
+});
+
+// Direciona para a página de login.html ou index.html se estiver logado
 app.get("/", (req, res) => {
     if (req.session.loggedin) {
         res.sendFile(path.join(__dirname, 'index.html'));
@@ -81,15 +87,17 @@ app.get("/", (req, res) => {
     }
 });
 
-// Rota para realizar o SELECT e retornar os dados
+// Retornar os dados da tabela movimentos
 app.get('/dados', (req, res) => {
-    const query = `SELECT * FROM movimentos ORDER BY data DESC, horario DESC`;
-    db.all(query, [], (err, rows) => {
+    const userId = require('./auth.js');
+
+    const query = `SELECT * FROM movimentos WHERE id_usuario = ? ORDER BY data DESC, horario DESC`;
+    db.all(query, [userId], (err, rows) => {
         if (err) {
             console.error("Erro ao realizar SELECT:", err.message);
             res.status(500).send("Erro ao realizar SELECT");
         } else {
-            res.json(rows); // Retorna os dados em formato JSON
+            res.json(rows);
         }
     });
 });

@@ -19,4 +19,21 @@ npm install express
 npm install sqlite3
 npm install serialport
 npm install ws
+npm install express-session
+```
+
+## Autorizar acesso ao USB
+
+``` Bash
+cat /etc/group | grep vboxusers
+sudo groupadd vboxusers
+sudo usermod -aG vboxusers $USER
+```
+
+Reiniciar o sistema
+
+## Executar
+
+``` Bash
+node app.js
 ```

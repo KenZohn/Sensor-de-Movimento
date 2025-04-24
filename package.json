@@ -11,9 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "serialport": "^13.0.0",
     "sqlite3": "^5.1.7",
     "ws": "^8.18.1"
   },
-  "description": ""
+  "description": "Projeto do 4º Semestre que consistia em desenvolver um sistema que conecta o Arduino, o Banco de Dados e o Front através de uma API utilizando o Node.js."
 }
