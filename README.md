@@ -30,11 +30,10 @@ sudo groupadd vboxusers
 sudo usermod -aG vboxusers $USER
 ```
 
-Reiniciar o computador.
+Reiniciar o sistema
 
 ## Executar
 
 ``` Bash
 node app.js
 ```
-Acessar http://localhost:3000/ no navegador.
