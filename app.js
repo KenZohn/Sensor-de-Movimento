@@ -9,6 +9,8 @@ const auth = require('./auth');
 const app = express();
 const port = 3000;
 
+app.use(express.static('public'));
+
 // Configuração da porta serial
 const arduinoPort = new SerialPort({ path: '/dev/ttyACM0', baudRate: 9600 });
 const parser = arduinoPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
